@@ -11,31 +11,37 @@ import jakarta.servlet.http.HttpSession;
 public class UserController {
 
 	/**
-	 * 회원가입 화면
-	 * @return
+	 * 회원가입 화면으로 이동
+	 * @return 회원가입 화면 템플릿 이름
 	 */
-	@GetMapping("/sign-up-view")
+	@GetMapping("/sign-up-view") // 유저가 브라우저에 입력 
 	public String signUpView() {
-		// 가운데 레이아웃 조각만 내려주면 전체 레이아웃과 함께 구성된다.
-		return "user/signUp";
+		// "user/signUp" 템플릿을 반환하여 회원가입 화면을 구성 (전체 레이아웃 중 가운데 조각만 포함)
+		return "user/signUp"; // 템플릿/유저/사인업.html 반환 
 	}
+	
 	/**
-	 * 로그인 화면
-	 * @return
+	 * 로그인 화면으로 이동
+	 * @return 로그인 화면 템플릿 이름
 	 */
 	@GetMapping("/sign-in-view")
 	public String signInView() {
-		return "user/signIn";
+		return "user/signIn"; // 로그인 화면 템플릿 반환
 	}
 	
+	/**
+	 * 로그아웃 처리
+	 * @param session 현재 사용자 세션 객체
+	 * @return 회원가입 화면으로 리다이렉트
+	 */
 	@GetMapping("/sign-out")
-	public String signOut(HttpSession session) { //()
-		// session을 비운다. 
+	public String signOut(HttpSession session) { 
+		// 세션에서 사용자 정보를 삭제하여 로그아웃 처리
 		session.removeAttribute("userId");
 		session.removeAttribute("userLoginId");
 		session.removeAttribute("userName");
 		
-		// 로그인 페이지로 이동(redirect)
+		// 회원가입 화면으로 리다이렉트
 		return "redirect:/user/sign-up-view";
 	}
 }
