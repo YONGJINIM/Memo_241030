@@ -29,7 +29,7 @@
         $(document).ready(function() {
             // 목록 버튼 클릭 시 목록 화면으로 이동
             $("#postListBtn").on('click', function() {
-                location.href = "/post/post-list-view";
+                location.href = "/post/post-list-view"; // 게시판 리스트로 보내기 
             });
             
             // 모두 지우기 버튼 클릭 시 제목과 내용 필드를 초기화
@@ -43,7 +43,7 @@
                 let subject = $("#subject").val().trim(); // 제목 입력 값 (앞뒤 공백 제거)
                 let content = $("#content").val().trim(); // 내용 입력 값 (앞뒤 공백 제거)
                 let fileName = $("#file").val(); // 첨부 파일 경로
-                console.log(fileName);
+                //console.log(fileName);
                 
                 // 유효성 검사: 제목이 없는 경우 경고 표시 후 중단
                 if (!subject) {
@@ -56,6 +56,9 @@
                     alert("내용을 입력하세요.");
                     return;
                 }
+                // console.log로 확인 
+                // console.log(subject);
+                // console.log(content);
 
                 // 첨부 파일이 있을 경우, 파일 확장자 유효성 검사
                 if(fileName) {
@@ -69,12 +72,13 @@
                         return;
                     }
                 }
-                
+				// 이미지 업로드시 form 태그 필요 
+				// form를 js에서 만든다. 
                 // 서버로 전송할 데이터 준비 (파일 포함)
                 let formData = new FormData();
                 formData.append("subject", subject); // 제목
                 formData.append("content", content); // 내용
-                formData.append("file", $("#file")[0].files[0]); // 파일
+                formData.append("file", $("#file")[0].files[0]); // 파일 files[0] <= 여러개의 파일 중 한개만 올린다.
 
                 // AJAX 요청
                 $.ajax({

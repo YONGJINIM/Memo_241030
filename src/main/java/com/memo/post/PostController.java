@@ -23,22 +23,30 @@ public class PostController {
 
 	@GetMapping("/post-list-view")
 	public String postListView(Model model, HttpSession session) {
-		// 로그인 여부 확인(권한 검사)
-		Integer userId = (Integer)session.getAttribute("userId");
-		if (userId == null) {
-			// 로그인 페이지로 이동
-			return "redirect:/user/sign-in-view";
-		}
-		
-		// db select => 로그인 된 사람이 쓴 글
-		List<Post> postList = postBO.getPostListByUserId(userId);
-				
-		// model 담기
-		model.addAttribute("postList", postList);
-		
-		return "post/postList";
+	    // 로그인 여부 확인(권한 검사)
+	    // 세션에서 userId 속성을 가져옴. 이 userId가 null이면 로그인이 안 된 상태이므로 접근을 허용하지 않음
+	    // getAttribute가 Object 타입이므로 다운캐스팅을 진행하며, userId가 null일 수 있기 때문에 Integer 사용
+	    Integer userId = (Integer) session.getAttribute("userId"); // 브레이크 포인트 걸어서 값(userId)이 잘 들어왔는지 확인 
+	    if (userId == null) {
+	        // 로그인이 안 된 상태이므로 로그인 페이지로 리다이렉트
+	        return "redirect:/user/sign-in-view";
+	    }
+	    
+	    // db select => 로그인 된 사람이 쓴 글
+	    // 로그인한 사용자의 userId를 기반으로 DB에서 해당 사용자가 작성한 게시글 목록을 조회
+	    List<Post> postList = postBO.getPostListByUserId(userId);
+	            
+	    // model에 postList 담기
+	    // 조회한 게시글 목록을 model 객체에 담아서 View에 전달
+	    model.addAttribute("postList", postList);
+	    
+	    // 게시글 목록 페이지로 이동
+	    return "post/postList";
 	}
-	
+	/**
+	 * 글쓰기 화면
+	 * @return
+	 */
 	@GetMapping("/post-create-view")
 	public String postCreateview() {
 		return "post/postCreate";

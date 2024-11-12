@@ -29,6 +29,7 @@ public class PostRestController {
             HttpSession session) { // 사용자 정보를 가져오기 위한 세션 객체
 
         // 세션에서 사용자 정보 가져오기
+    	// 세션에서 null이면 로그인이 풀린 것이였다. 
         int userId = (int) session.getAttribute("userId"); // 사용자 ID 가져오기
         String userLoginId = (String) session.getAttribute("userLoginId"); // 사용자 로그인 ID 가져오기
         
