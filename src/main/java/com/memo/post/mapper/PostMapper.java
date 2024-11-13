@@ -18,6 +18,7 @@ public interface PostMapper {
 	public List<Post> selectPostListByUserId(int userId);
 	
 	// input:params    output:int or void
+	// ibatits로 import
 	public int insertPost(
 			@Param("userId") int userId,
 			@Param("subject") String subject,
@@ -29,4 +30,13 @@ public interface PostMapper {
 	public Post selectPostByPostIdUserId(
 			@Param("postId") int postId,
 			@Param("userId") int userId);
+	
+	// input: postId, subject, content, imagePath
+	// output: int or void
+	public void updatePostByPostId( 
+		@Param("postId") int postId,
+		@Param("subject") String subject,
+		@Param("content") String content,
+		@Param("imagePath") String imagePath);
+	
 }	

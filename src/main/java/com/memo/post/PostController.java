@@ -45,13 +45,20 @@ public class PostController {
 	}
 	/**
 	 * 글쓰기 화면
+	 * 사용자가 /post-create-view 경로로 접속하면 post/postCreate.html 파일을 보여주도록 설정
 	 * @return
 	 */
 	@GetMapping("/post-create-view")
 	public String postCreateview() {
 		return "post/postCreate";
 	}
-	
+	/**
+	 * 글 상세 화면
+	 * @param postId
+	 * @param model
+	 * @param session
+	 * @return
+	 */
 	@GetMapping("/post-detail-view")
 	public String postDetailView(
 			@RequestParam("postId") int postId,
