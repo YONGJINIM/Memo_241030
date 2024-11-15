@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
- <mapper namespace="com.memo.post.mapper.PostMapper">
-	<select id="selectPostLis" resultType="Map">
+<mapper namespace="com.memo.post.mapper.PostMapper">
+	<select id="selectPostList" resultType="map">
 		SELECT
 			*
 		FROM
 			`post`
 	</select>
 	
-	<select id="selectPostListByUserId" parameterType="int" resultType="com.memo.post.domain.Post">
+	<select id="selectPostListByUserId" parameterType="map" resultType="com.memo.post.domain.Post">
 		SELECT
 			`id`
 			,`userId`
@@ -22,8 +22,36 @@
 		FROM
 			`post`
 		WHERE
-			`userId`= #{userId}
+			`userId` = #{userId}
+			<if test="direction == 'next'">
+			<![CDATA[
+			AND `id` < #{standardId}
+			]]>
+			ORDER BY `id` DESC
+			</if>
+			<if test="direction == 'prev'">
+			<![CDATA[
+			AND `id` > #{standardId}
+			]]>
+			ORDER BY `id` ASC
+			</if>
+			<if test="direction == null">
+			ORDER BY `id` DESC
+			</if>
+		LIMIT ${limit}
 	</select>
+	
+	<select id="selectPostIdByUserIdAsSort" parameterType="map" resultType="int">
+		SELECT
+			`id`
+		FROM
+			`post`
+		WHERE
+			`userId` = #{userId}
+		ORDER BY `id` ${sort}
+		LIMIT 1
+	</select>
+	
 	<insert id="insertPost" parameterType="map">
 		INSERT INTO `post`
 		(
@@ -44,6 +72,7 @@
 			, NOW()
 		)
 	</insert>
+	
 	<select id="selectPostByPostIdUserId" parameterType="map" resultType="com.memo.post.domain.Post">
 		SELECT
 			`id`
@@ -57,21 +86,27 @@
 			`post`
 		WHERE
 			`userId` = #{userId}
-			AND `id` = #{postId}	
+			AND `id` = #{postId}
 	</select>
+	
 	<update id="updatePostByPostId" parameterType="map">
-			UPDATE `post`
-			SET
-				`subject` = #{subject}
-				,`content` = #{content}
-				<if test="imagePath != null">
-				,`imagePath` = #{imagePath}
-				</if>
-				,`updatedAt` = NOW()
-			WHERE
-				`id` = #{postId}
-	
-	
-	
+		UPDATE `post`
+		SET
+			`subject` = #{subject}
+			, `content` = #{content}
+			<if test="imagePath != null">
+			, `imagePath` = #{imagePath}
+			</if>
+			, `updatedAt` = NOW()
+		WHERE
+			`id` = #{postId}
 	</update>
- </mapper>
+	
+	<delete id="deletePostByPostId" parameterType="int">
+		DELETE
+		FROM
+			`post`
+		WHERE
+			`id` = #{postId}
+	</delete>
+</mapper>

@@ -11,32 +11,41 @@ import com.memo.post.domain.Post;
 @Mapper
 public interface PostMapper {
 	
-	// input: X    output: List<Map<String, Object>
+	// input: X    output: List<Map<String, Object>>
 	public List<Map<String, Object>> selectPostList();
 	
-	// input:int(userId) output: List<Post>
-	public List<Post> selectPostListByUserId(int userId);
+	// input:int(userId), +페이징 정보 output: List<Post>
+	public List<Post> selectPostListByUserId(
+			@Param("userId") int userId,
+			@Param("standardId") Integer standardId,
+			@Param("direction") String direction,
+			@Param("limit") int limit);
+	
+	public int selectPostIdByUserIdAsSort(
+			@Param("userId") int userId,
+			@Param("sort") String sort);
 	
 	// input:params    output:int or void
-	// ibatits로 import
 	public int insertPost(
 			@Param("userId") int userId,
 			@Param("subject") String subject,
 			@Param("content") String content,
 			@Param("imagePath") String imagePath);
 	
-	// postId, userId
-	// post or null 단건이면 null일 수 있다. 
+	// input:postId, userId    output: Post or null
 	public Post selectPostByPostIdUserId(
 			@Param("postId") int postId,
 			@Param("userId") int userId);
 	
-	// input: postId, subject, content, imagePath
-	// output: int or void
-	public void updatePostByPostId( 
-		@Param("postId") int postId,
-		@Param("subject") String subject,
-		@Param("content") String content,
-		@Param("imagePath") String imagePath);
+	// input:postId, subject, content, imagePath     
+	// output:int or void
+	public void updatePostByPostId(
+			@Param("postId") int postId,
+			@Param("subject") String subject,
+			@Param("content") String content,
+			@Param("imagePath") String imagePath);
 	
-}	
+	// input: postId
+	// output: int(삭제된 행 개수)
+	public int deletePostByPostId(int postId);
+}

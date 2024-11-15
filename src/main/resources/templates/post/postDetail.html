@@ -8,9 +8,10 @@
 		<h1>글 상세</h1>
 		<input type="text" id="subject" class="form-control" placeholder="제목을 입력하세요" th:value="${post.subject}">
 		<textarea id="content" rows="10" class="form-control" placeholder="내용을 입력하세요" th:text="${post.content}"></textarea>
-		<!-- 이미지 영역 : 이미지가 존재할 때만 나오게 한다. -->
+		
+		<!-- 이미지 영역: 이미지가 있을 때에만 -->
 		<div class="my-3" th:if="${post.imagePath != null}">
-			<img th:src="${post.imagePath}" alt="본문 이미지" width="300">	
+			<img th:src="${post.imagePath}" alt="본문 이미지" width="300">
 		</div>
 		
 		<div class="d-flex justify-content-end my-3">
@@ -18,96 +19,107 @@
 		</div>
 		
 		<div class="d-flex justify-content-between">
-			<button type="button" id="delBtn" class="btn btn-secondary">삭제</button>
-		<div>
-			<a class="btn btn-dark" href="/post/post-list-view">목록</a>
-			<button type="button" id="saveBtn" class="btn btn-warning" th:data-post-id="${post.id}">수정</button>
-		</div>
+			<button type="button" id="delBtn" class="btn btn-secondary" th:data-post-id="${post.id}">삭제</button>
+			<div>
+				<a class="btn btn-dark" href="/post/post-list-view">목록</a>
+				<button type="button" id="saveBtn" class="btn btn-warning" th:data-post-id="${post.id}">수정</button>
+			</div>
 		</div>
 	</div>
 </section>
 
 <th:block layout:fragment="script">
     <script>
-    $(document).ready(function(){
-    	$("#saveBtn").on("click" , function(){
-    		 let postId = $(this).data("post-id");    		
-    		 // alert(postId);
-    		 // return;
-    		 // alert("수정")
-    		let subject = $("#subject").val().trim(); // 제목 입력 값 (앞뒤 공백 제거)
-                let content = $("#content").val().trim(); // 내용 입력 값 (앞뒤 공백 제거)
-                let fileName = $("#file").val(); // 첨부 파일 경로(String)
-                //console.log(fileName);
-                
-                // 유효성 검사: 제목이 없는 경우 경고(제목을 입력하세요) 표시 후 중단 (필수 항목)
-                if (!subject) {
-                    alert("제목을 입력하세요.");
-                    return; 
-                }
-
-                // 유효성 검사: 내용이 없는 경우 경고(내용을 입력하세요) 표시 후 중단 (필수 항목)
-                if (!content) {
-                    alert("내용을 입력하세요.");
-                    return;
-                }
-                // console.log로 확인 
-
-
-                // 첨부 파일이 있을 경우, 파일 확장자 유효성 검사
-                if(fileName) {
-                    // 파일 확장자 추출
-                    // alert(파일이 있다);
-                    // return;
-                    let extension = fileName.split(".").pop().toLowerCase();
-                    // alert(extension);
-                    // return;
-                    
-                    // 허용된 확장자 목록에 해당하지 않으면 경고 표시 후 파일 입력 초기화
-                    if($.inArray(extension, ["jpg", "png", "gif"]) < 0) {
-                        alert("이미지 파일만 업로드 할 수 있습니다.");
-                        $("#file").val(""); // 파일 입력 필드 초기화
-                        return;
-                    }
-                }
-                 // console.log로 값 확인
-                 console.log(subject);
-                 console.log(content);
-                 
-                // 이미지 때문에 폼 태그를 JS에서 만든다. 
-                // let postId = ${} 모델에 있는 것을 뽑아서 가져오는 것 방법1
-                // postId를 심는다. 
-                let formData = new FormData();
-                formData.append("postId" , postId);
-                formData.append("subject" , subject);
-                formData.append("content" , content);
-                formData.append("file" , $("#file")[0].files[0]);
-                
-                $.ajax({
-                	// req
-                	type:"put"
-                	,url:"/post/update"
-                	,data:formData
-                	,processData:false // 파일 업로드 필수설정
-                	,contentType:false // 파일 업로드 필수설정
-                	,enctype:"multipart/form-data" // 파일 업로드 필수설정              	
-                	
-                	// res
-                	, success:function(data){
-                		if(data.code == 200){
-                			alert("글이 수정되었습니다.");
-                			location.reload(true);
-                		} else {
-                			alert(data.error_message);
-                		}
-                	}
-                	, error:function(e){
-                		alert("메모를 수정하는데 실패했습니다.");
-                	}
-                	
-                	
-                });
-    	});   	
-    });
+		$(document).ready(function() {
+			$("#saveBtn").on('click', function() {
+				let postId = $(this).data("post-id");
+				//alert(postId);
+				
+				//alert("수정");
+				let subject = $("#subject").val().trim();
+				let content = $("#content").val().trim();
+				let fileName = $("#file").val(); // C:\fakepath\sun-3275314_1280.jpg
+				
+				if (!subject) {
+					alert("제목을 입력하세요.");
+					return;
+				}
+				
+				if (!content) {
+					alert("내용을 입력하세요.");
+					return;
+				}
+				
+				// 파일명이 있으면 확장자 체크
+				if (fileName) {
+					//alert("파일이 있다.");
+					// C:\fakepath\sun-3275314_1280.jpg
+					let extension = fileName.split(".").pop().toLowerCase();
+					//console.log(extension);
+					
+					if ($.inArray(extension, ["jpg", "png", "gif"]) == -1) {
+						alert("이미지 파일만 업로드 할 수 있습니다.");
+						$("#file").val(""); // 파일을 비운다.
+						return;
+					}
+				}
+				
+				console.log(subject);
+				console.log(content);
+				
+				// 이미지 때문에 form 태그 js에서 만듦
+				let formData = new FormData();
+				formData.append("postId", postId);
+				formData.append("subject", subject);
+				formData.append("content", content);
+				formData.append("file", $("#file")[0].files[0]);
+				
+				$.ajax({
+					// request
+					type:"put"
+					, url:"/post/update"
+					, data:formData
+					, processData:false // 파일업로드 필수 설정
+					, contentType:false // 파일업로드 필수 설정
+					, enctype:"multipart/form-data" // 파일업로드 필수 설정
+					
+					// response
+					, success:function(data) {
+						if (data.code == 200) {
+							alert("글이 수정되었습니다.");
+							location.reload(true);
+						} else {
+							alert(data.error_message);
+						}
+					}
+					, error:function(e) {
+						alert("메모를 수정하는데 실패했습니다.");
+					}
+				});
+			});
+			
+			// 글 삭제
+			$("#delBtn").on("click", function(){
+				let postId = $(this).data("post-id");
+				//alert(postId);
+				
+				$.ajax({
+					type:"delete"
+					, url:"/post/delete"
+					, data:{"postId":postId}
+					, success:function(data) {
+						if (data.result == "성공") {
+							alert("메모가 삭제되었습니다.");
+							location.href = "/post/post-list-view";
+						} else {
+							alert(data.error_message);
+						}
+					}
+					, error:function(e) {
+						alert("글을 삭제하는데 실패했습니다.");
+					}
+				});
+			});
+		});
     </script>
 </th:block>
